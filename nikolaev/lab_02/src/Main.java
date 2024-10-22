@@ -3,7 +3,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
     static class CustomDaemon extends Thread {
-        private String message;
+        private final String message;
 
         public CustomDaemon(ThreadGroup group, String name, String message) {
             super(group, name);
@@ -64,7 +64,7 @@ public class Main {
                 thA, th1G2, th2G2, th33G2, th11, th22, thaaG3, thbbG3, thccG3, thddG3
         };
 
-        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ExecutorService executor = Executors.newFixedThreadPool(threads.length);
 
         System.out.println("\nStarting all threads via executor:");
 
@@ -76,11 +76,11 @@ public class Main {
             th11.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            e.printStackTrace();
+            System.out.println("Interrupted: " + e.getMessage());
         } finally {
             executor.shutdown();
         }
 
-        // System.out.println("All threads have finished.");
+        // System.out.println("\nAll threads have finished.");
     }
 }

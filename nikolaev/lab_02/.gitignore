@@ -27,7 +27,7 @@ bin/
 .idea/
 
 # iml file
-lab_2.iml
+*.iml
 
 ### Mac OS ###
 .DS_Store
