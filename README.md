@@ -4,5 +4,5 @@ Instructions:
 2. git pull
 3. git checkout -b "<branch_name>"
 4. git add .
-5. git commit -m "<commit message>"
+5. git commit -m "<commit_message>"
 6. git push --set-upstream origin "<branch_name>"
