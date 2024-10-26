@@ -1,20 +1,17 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class Main {
-    static class CustomDaemon extends Thread {
-        private final String message;
-
-        public CustomDaemon(ThreadGroup group, String name, String message) {
+    static class CustomThread extends Thread {
+        public CustomThread(ThreadGroup group, String name) {
             super(group, name);
             setDaemon(true);
-            this.message = message;
         }
 
         @Override
         public void run() {
-
-            System.out.println(message);
+            while (!Thread.currentThread().isInterrupted()) {
+                boolean isDaemon = Thread.currentThread().isDaemon();
+                // never executable condition
+                if (!isDaemon) System.out.println("Not daemon thread " + this.getName());
+            }
         }
     }
 
@@ -22,71 +19,72 @@ public class Main {
         // System (main)
         ThreadGroup mainGroup = Thread.currentThread().getThreadGroup();
 
-        Thread thA = new CustomDaemon(mainGroup, "ThA", "ThA is running");
+        Thread thA = new CustomThread(mainGroup, "ThA");
         thA.setPriority(3);
+        // thA.setDaemon(true);
 
         ThreadGroup group2 = new ThreadGroup(mainGroup, "G2");
 
-        Thread th1G2 = new CustomDaemon(group2, "Th1", "Th1 in G2 is running");
+        Thread th1G2 = new CustomThread(group2, "Th1");
         th1G2.setPriority(5);
+        // th1G2.setDaemon(true);
 
-        Thread th2G2 = new CustomDaemon(group2, "Th2", "Th2 in G2 is running");
+        Thread th2G2 = new CustomThread(group2, "Th2");
         th2G2.setPriority(3);
+        // th2G2.setDaemon(true);
 
-        Thread th33G2 = new CustomDaemon(group2, "Th33", "Th33 in G2 is running");
+        Thread th33G2 = new CustomThread(group2, "Th33");
         th33G2.setPriority(7);
+        // th33G2.setDaemon(true);
 
-        Thread th11 = new CustomDaemon(mainGroup, "Th11", "Th11 is running");
+        Thread th11 = new CustomThread(mainGroup, "Th11");
         th11.setPriority(3);
+        // th11.setDaemon(true);
 
-        Thread th22 = new CustomDaemon(mainGroup, "Th22", "Th22 is running");
+        Thread th22 = new CustomThread(mainGroup, "Th22");
         th22.setPriority(3);
+        // th22.setDaemon(true);
 
         ThreadGroup group1 = new ThreadGroup(mainGroup, "G1");
 
         ThreadGroup group3 = new ThreadGroup(group1, "G3");
 
-        Thread thaaG3 = new CustomDaemon(group3, "Thaa", "Thaa in G3 is running");
+        Thread thaaG3 = new CustomThread(group3, "Thaa");
         thaaG3.setPriority(2);
+        // thaaG3.setDaemon(true);
 
-        Thread thbbG3 = new CustomDaemon(group3, "Thbb", "Thbb in G3 is running");
+        Thread thbbG3 = new CustomThread(group3, "Thbb");
         thbbG3.setPriority(3);
+        // thbbG3.setDaemon(true);
 
-        Thread thccG3 = new CustomDaemon(group3, "Thcc", "Thcc in G3 is running");
+        Thread thccG3 = new CustomThread(group3, "Thcc");
         thccG3.setPriority(8);
+        // thccG3.setDaemon(true);
 
-        Thread thddG3 = new CustomDaemon(group3, "Thdd", "Thdd in G3 is running");
+        Thread thddG3 = new CustomThread(group3, "Thdd");
         thddG3.setPriority(3);
+        // thddG3.setDaemon(true);
+
+        // Startup
+        Thread[] threads = {
+                thA, th1G2, th2G2, th33G2, th11, th22, thaaG3, thbbG3, thccG3, thddG3
+        };
+
+        // Start all threads
+        for (Thread thread : threads) {
+            thread.start();
+        }
 
         ThreadGroup[] threadGroups = {
                 mainGroup, group1, group2, group3
         };
 
         for (ThreadGroup group : threadGroups) {
+            System.out.println(group.getName()+":");
             group.list();
+            System.out.println("\n--------------------------------");
         }
 
-        Thread[] threads = {
-                thA, th1G2, th2G2, th33G2, th11, th22, thaaG3, thbbG3, thccG3, thddG3
-        };
-
-        ExecutorService executor = Executors.newFixedThreadPool(threads.length);
-
-        System.out.println("\nStarting all threads via executor service:");
-
-        for (Thread thread : threads) {
-            executor.submit(thread);
-        }
-
-        try {
-            th11.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.out.println("Interrupted: " + e.getMessage());
-        } finally {
-            executor.shutdown();
-        }
-
-        // System.out.println("\nAll threads have finished.");
+        System.out.println("\nFinished");
     }
 }
