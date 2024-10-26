@@ -13,6 +13,7 @@ public class Main {
 
         @Override
         public void run() {
+
             System.out.println(message);
         }
     }
@@ -57,8 +58,13 @@ public class Main {
         Thread thddG3 = new CustomDaemon(group3, "Thdd", "Thdd in G3 is running");
         thddG3.setPriority(3);
 
-        mainGroup.list();
-        System.out.println("\nStarting all threads:");
+        ThreadGroup[] threadGroups = {
+                mainGroup, group1, group2, group3
+        };
+
+        for (ThreadGroup group : threadGroups) {
+            group.list();
+        }
 
         Thread[] threads = {
                 thA, th1G2, th2G2, th33G2, th11, th22, thaaG3, thbbG3, thccG3, thddG3
@@ -66,7 +72,7 @@ public class Main {
 
         ExecutorService executor = Executors.newFixedThreadPool(threads.length);
 
-        System.out.println("\nStarting all threads via executor:");
+        System.out.println("\nStarting all threads via executor service:");
 
         for (Thread thread : threads) {
             executor.submit(thread);
